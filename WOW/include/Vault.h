@@ -14,6 +14,7 @@ public:
     V* vertices;
     V* vertices_tmp;
     edge_t<E>* edges;
+    unsigned long remote_ac = 0;
     //bool vertexpropertyowner;
     //int tiles_per_dim;
     //int num_threads;
@@ -59,6 +60,8 @@ void Vault<V,E>::VRun_Syn_Pro(V* vertices_G, V* vertices_G_tmp) {
 //        cout << "g_num_edges:" << g_num_edges << endl;
 //        cout << "active:" << vertices_G[g_src].active << endl;
         if(vertices_G[g_src].active) {
+            if(g_src < star_ver || g_src > end_ver)
+                remote_ac ++;
             for (auto i_edge=0; i_edge<g_num_edges; i_edge++){
                 V Res;
                 int Res_dst = edges[Runed_edges+i_edge].dst;

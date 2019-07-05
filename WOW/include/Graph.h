@@ -254,6 +254,48 @@ void Graph<V,E>::LoadGraph(const char* filename) {
     cout << "num_edges:" << num_edges << endl;
     ParttoVault(&A_edges, &Vault_imp, Xbar_size, Vault_num);
     GetRatio(&Vault_imp, row_ratio);
+    unsigned long sub_numbers = 0;
+    
+    for(auto i=0; i<NUM_VAULT; i++) {
+        unsigned long num_s = 0;
+        //cout << "<<<<<" << endl;
+        //int star_ver  = Vault_imp[i].star_ver;
+        //int end_ver = Vault_imp[i].end_ver;
+        for (auto x=Vault_imp[i].star_ver; x<Vault_imp[i].end_ver; ){
+            for (auto y=0; y<num_vertices; ){
+
+                //cout << "coming" << endl;
+                bool index = true;
+                bool index_2 = true;
+                while (num_s < Vault_imp[i].num_edges &&  index_2) {
+                    bool in_sub = false;
+                    
+                    if (Vault_imp[i].edges[num_s].src >= y && Vault_imp[i].edges[num_s].src < y+XBAR_SIZE)
+                        if(Vault_imp[i].edges[num_s].dst >= x && Vault_imp[i].edges[num_s].dst < x+XBAR_SIZE)
+                            in_sub = true;
+                    //cout << Vault_imp[i].edges[num_s].src << " " << Vault_imp[i].edges[num_s].dst << endl;
+                    if(in_sub){
+                        if(index){
+                            sub_numbers++;
+                            index = false;
+                            //cout << "____" << endl;
+                        }
+                        num_s ++;
+                    }
+                    else {
+                        index_2 = false;
+                    }
+                }
+                y= y + XBAR_SIZE;
+            }
+            x = x + XBAR_SIZE;
+        }
+        //cout << sub_numbers << endl;
+    }
+    
+    cout <<sub_numbers << endl;
+    cout << "=========" << endl;
+    
     unsigned long sub_edges = 0;
     for(auto i=0; i<XBAR_SIZE; i++){
         sub_edges += row_ratio[i] * (i+1);
@@ -273,9 +315,6 @@ void Graph<V,E>::LoadGraph(const char* filename) {
 //            cout << '(' << Vault_imp[i].edges[j].src << ',' << Vault_imp[i].edges[j].dst << ',' << Vault_imp[i].edges[j].val << ')' << endl;
 //        }
 //        cout << "------------------------------" << endl;
-//        for(auto k=0; k<Vault_imp[i].num_vertices; k++) {
-//            cout << '(' << Vault_imp[i].vertices[k].id << ',' << Vault_imp[i].vertices[k].parent << ',' << Vault_imp[i].vertices[k].depth << ',' << Vault_imp[i].vertices[k].active << ')' << endl;
-//        }
 //    }
 }
 
@@ -372,4 +411,10 @@ void Graph<V,E>::GRun_Syn_Pro(int iterations) {
 //    for (auto i=0; i<num_vertices; i++){
 //        cout << vertices[i].id << ':' << vertices[i].depth <<endl;
 //    }
+    unsigned long acc_sum = 0;
+    for (auto i=0; i<NUM_VAULT; i++) {
+        cout << i <<"_remote_ac:" << Vault_imp[i].remote_ac << endl;
+        acc_sum += Vault_imp[i].remote_ac;
+    }
+    cout << "acc_sum:" << acc_sum << endl;
 }
